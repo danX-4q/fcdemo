@@ -57,6 +57,17 @@ import static org.hyperledger.fabric.sdk.Channel.PeerOptions.createPeerOptions;
 
 public class FcWithRaw {
 
+	//modify them when filesystem path change!
+	final String prefixUserPath = "/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org11.example.com/users/";
+	final String privateKeyFileName = prefixUserPath + "Admin@org11.example.com/msp/keystore/a5eb4508e00be162ad75146dc7d4ac6c19deddedf661e638ba2f4c89660e645f_sk";
+	final String certificateFileName = prefixUserPath + "Admin@org11.example.com/msp/signcerts/Admin@org11.example.com-cert.pem";
+	final String peer0Org11PemFile = "/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org11.example.com/peers/peer0.org11.example.com/tls/server.crt";
+	final String peer0Org22PemFile = "/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org22.example.com/peers/peer0.org22.example.com/tls/server.crt";
+	final String order0Org11PemFile = "/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt";
+	final String tmpStore = "./temp/store";
+
+	////////////////////////////////////
+
     public void Do() {
 		try {
 
@@ -68,16 +79,13 @@ public class FcWithRaw {
 			client.setCryptoSuite(crypto);
 
 			System.out.println("Loading Admin@org11.example.com from disk");
-			final String prefixUserPath = "/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org11.example.com/users/";
-			final String privateKeyFileName = prefixUserPath + "Admin@org11.example.com/msp/keystore/a5eb4508e00be162ad75146dc7d4ac6c19deddedf661e638ba2f4c89660e645f_sk";
-			final String certificateFileName = prefixUserPath + "Admin@org11.example.com/msp/signcerts/Admin@org11.example.com-cert.pem";
 			final File privateKeyFile = new File(privateKeyFileName);
 			final File certificateFile = new File(certificateFileName);
 
-			File file = new File("/Users/danoking/Documents/workspace/fcdemo/abc.xxx");
+			File file = new File(tmpStore);
 			if (file.exists()){
 				file.delete();
-				file = new File("/Users/danoking/Documents/workspace/fcdemo/abc.xxx");
+				file = new File(tmpStore);
 				System.out.println(file.getName()+"delete and re-create!");
 			} else {
 				System.out.println("do nothing.");
@@ -100,8 +108,7 @@ public class FcWithRaw {
 
 			{
 				final Properties peerProperties = new Properties();
-				peerProperties.setProperty("pemFile",
-					"/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org11.example.com/peers/peer0.org11.example.com/tls/server.crt");
+				peerProperties.setProperty("pemFile", peer0Org11PemFile);
 				peerProperties.setProperty("hostnameOverride", "peer0.org11.example.com");
 				peerProperties.setProperty("sslProvider", "openSSL");
 				peerProperties.setProperty("negotiationType", "TLS");
@@ -112,8 +119,7 @@ public class FcWithRaw {
 
 			{
 				final Properties peerProperties = new Properties();
-				peerProperties.setProperty("pemFile",
-					"/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/peerOrganizations/org22.example.com/peers/peer0.org22.example.com/tls/server.crt");
+				peerProperties.setProperty("pemFile", peer0Org22PemFile);
 				peerProperties.setProperty("hostnameOverride", "peer0.org22.example.com");
 				peerProperties.setProperty("sslProvider", "openSSL");
 				peerProperties.setProperty("negotiationType", "TLS");
@@ -129,8 +135,7 @@ public class FcWithRaw {
 
 
 			final Properties ordererProperties = new Properties();
-			ordererProperties.setProperty("pemFile",
-					"/Users/danoking/Documents/workspace/fabric/fabric-samples/first-network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt");
+			ordererProperties.setProperty("pemFile", order0Org11PemFile);
 			ordererProperties.setProperty("trustServerCertificate", "true");
 			ordererProperties.setProperty("hostnameOverride", "orderer.example.com");
 			ordererProperties.setProperty("sslProvider", "openSSL");
